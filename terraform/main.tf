@@ -34,7 +34,7 @@ resource "aws_instance" "green" {
               EOF
 }
 
-#Security Group for Instances
+Security Group for Instances
 resource "aws_security_group" "instance_sg" {
   name        = "blue-green-sg"
   description = "Allow HTTP traffic"
