@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}  # AWS region (e.g., us-east-1)
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
-      INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
-      KEYPAIR_NAME: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
-      AMI_ID: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
+      aws_region: ${{ secrets.AWS_REGION }}  # AWS region (e.g., us-east-1)
+      aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
+      instance_type: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
+      key_name: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
+      ami_id: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
 
     steps:
       # Step 1: Checkout the Code
