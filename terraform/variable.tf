@@ -15,8 +15,7 @@ variable "aws_secret_key" {
 
 variable "instance_type" {
   description = "Type of instance to use"
-  type        = string
-  default     = "t2.micro" # Optional default value
+  type        = string 
 }
 
 variable "ami_id" {

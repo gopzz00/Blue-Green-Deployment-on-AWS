@@ -1,0 +1,55 @@
+name: Blue-Green Deployment CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your desired branch
+  pull_request:
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}  # Adjust to your AWS region
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}
+      KEYPAIR_NAME: ${{ secrets.KEY_NAME }}
+      AMI_ID: ${{ secrets.AWS_AMI_ID }}
+
+    steps:
+      # Step 1: Checkout the Code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      # Step 3: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 4: Validate Terraform
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 5: Apply Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -out=terraform.tfplan
+
+      # Step 6: Deploy Infrastructure
+      - name: Terraform Apply
+        run: terraform apply -auto-approve terraform.tfplan
+
+      # Step 7: Post Deployment Verification
+      - name: Verify Application
+        run: |
+          echo "Waiting for instances to be ready..."
+          sleep 30
+          curl -I http://<load-balancer-endpoint>
+

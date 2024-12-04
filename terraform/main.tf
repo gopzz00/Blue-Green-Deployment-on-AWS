@@ -34,7 +34,7 @@ resource "aws_instance" "green" {
               EOF
 }
 
-# Security Group for Instances
+#Security Group for Instances
 resource "aws_security_group" "instance_sg" {
   name        = "blue-green-sg"
   description = "Allow HTTP traffic"
@@ -51,6 +51,19 @@ resource "aws_security_group" "instance_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Fetch the default VPC
+data "aws_vpc" "default" {
+  default = true
+}
+
+# Fetch available subnets in the default VPC
+data "aws_subnets" "available" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
   }
 }
 
