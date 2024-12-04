@@ -43,7 +43,7 @@ jobs:
 
       # Step 5: Terraform Plan (Use -chdir to specify the terraform/ directory)
       - name: Terraform Plan
-        run: terraform -chdir=terraform plan -out=terraform/terraform.tfplan  # Plan the changes to be made
+        run: terraform -chdir=terraform plan -out=terraform.tfplan  # Plan the changes to be made
         continue-on-error: false  # Stop the pipeline if the plan fails
 
       # Step 6: Deploy Infrastructure (Apply the Plan)
