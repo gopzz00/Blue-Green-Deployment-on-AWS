@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      aws_region: ${{ secrets.AWS_REGION }}  # AWS region (e.g., us-east-1)
-      aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
-      instance_type: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
-      key_name: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
-      ami_id: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
+      AWS_REGION: ${{ secrets.AWS_REGION }}  # AWS region (e.g., us-east-1)
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
+      INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
+      KEYPAIR_NAME: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
+      AMI_ID: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
 
     steps:
       # Step 1: Checkout the Code
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7  # Set the required Terraform version
+          terraform_version: 1.10.0  # Set the required Terraform version
 
       # Step 3: Initialize Terraform (Use -chdir to specify the terraform/ directory)
       - name: Terraform Init
