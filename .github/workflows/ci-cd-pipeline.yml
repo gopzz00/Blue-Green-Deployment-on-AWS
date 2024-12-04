@@ -32,23 +32,23 @@ jobs:
         with:
           terraform_version: 1.5.7  # Set the required Terraform version
 
-      # Step 3: Initialize Terraform (Point to terraform/ directory)
+      # Step 3: Initialize Terraform (Use -chdir to specify the terraform/ directory)
       - name: Terraform Init
-        run: terraform init terraform/  # Initialize Terraform working directory
+        run: terraform -chdir=terraform init  # Initialize Terraform working directory
 
-      # Step 4: Validate Terraform Configuration (Point to terraform/ directory)
+      # Step 4: Validate Terraform Configuration (Use -chdir to specify the terraform/ directory)
       - name: Terraform Validate
-        run: terraform validate terraform/  # Validate the Terraform configuration files
+        run: terraform -chdir=terraform validate  # Validate the Terraform configuration files
         continue-on-error: false  # If validation fails, stop the pipeline
 
-      # Step 5: Terraform Plan (Point to terraform/ directory)
+      # Step 5: Terraform Plan (Use -chdir to specify the terraform/ directory)
       - name: Terraform Plan
-        run: terraform plan -out=terraform/terraform.tfplan terraform/  # Plan the changes to be made
+        run: terraform -chdir=terraform plan -out=terraform/terraform.tfplan  # Plan the changes to be made
         continue-on-error: false  # Stop the pipeline if the plan fails
 
       # Step 6: Deploy Infrastructure (Apply the Plan)
       - name: Terraform Apply
-        run: terraform apply -auto-approve terraform/terraform.tfplan terraform/  # Apply the changes automatically
+        run: terraform -chdir=terraform apply -auto-approve terraform/terraform.tfplan  # Apply the changes automatically
         continue-on-error: false  # If apply fails, stop the pipeline
 
       # Step 7: Post Deployment Verification
@@ -57,7 +57,7 @@ jobs:
           echo "Waiting for instances to be ready..."
           sleep 30  # Wait for instances to initialize
           # Get Load Balancer DNS or IP and verify the deployment
-          LB_DNS=$(terraform output -raw load_balancer_dns terraform/)  # Assuming load_balancer_dns is an output variable in Terraform
+          LB_DNS=$(terraform -chdir=terraform output -raw load_balancer_dns)  # Assuming load_balancer_dns is an output variable in Terraform
           echo "Verifying load balancer DNS: $LB_DNS"
           if curl -s --head --request GET "http://$LB_DNS" | grep "200 OK"; then
             echo "Application is up and running"
