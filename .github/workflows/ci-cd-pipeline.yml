@@ -3,8 +3,10 @@ name: Blue-Green Deployment CI/CD
 on:
   push:
     branches:
-      - main  # Adjust this to your desired branch
+      - main  # Trigger the workflow on pushes to the main branch
   pull_request:
+    branches:
+      - main  # Optionally, trigger on pull requests to the main branch
 
 jobs:
   deploy:
@@ -12,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}  # Adjust to your AWS region
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}
-      KEYPAIR_NAME: ${{ secrets.KEY_NAME }}
-      AMI_ID: ${{ secrets.AWS_AMI_ID }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}  # AWS region (e.g., us-east-1)
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
+      INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
+      KEYPAIR_NAME: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
+      AMI_ID: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
 
     steps:
       # Step 1: Checkout the Code
@@ -28,28 +30,47 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7
+          terraform_version: 1.5.7  # Set the required Terraform version
 
-      # Step 3: Initialize Terraform
+      # Step 3: Initialize Terraform (Point to terraform/ directory)
       - name: Terraform Init
-        run: terraform init
+        run: terraform init terraform/  # Initialize Terraform working directory
 
-      # Step 4: Validate Terraform
+      # Step 4: Validate Terraform Configuration (Point to terraform/ directory)
       - name: Terraform Validate
-        run: terraform validate
+        run: terraform validate terraform/  # Validate the Terraform configuration files
+        continue-on-error: false  # If validation fails, stop the pipeline
 
-      # Step 5: Apply Terraform Plan
+      # Step 5: Terraform Plan (Point to terraform/ directory)
       - name: Terraform Plan
-        run: terraform plan -out=terraform.tfplan
+        run: terraform plan -out=terraform/terraform.tfplan terraform/  # Plan the changes to be made
+        continue-on-error: false  # Stop the pipeline if the plan fails
 
-      # Step 6: Deploy Infrastructure
+      # Step 6: Deploy Infrastructure (Apply the Plan)
       - name: Terraform Apply
-        run: terraform apply -auto-approve terraform.tfplan
+        run: terraform apply -auto-approve terraform/terraform.tfplan terraform/  # Apply the changes automatically
+        continue-on-error: false  # If apply fails, stop the pipeline
 
       # Step 7: Post Deployment Verification
-      - name: Verify Application
+      - name: Verify Application is Running
         run: |
           echo "Waiting for instances to be ready..."
-          sleep 30
-          curl -I http://<load-balancer-endpoint>
+          sleep 30  # Wait for instances to initialize
+          # Get Load Balancer DNS or IP and verify the deployment
+          LB_DNS=$(terraform output -raw load_balancer_dns terraform/)  # Assuming load_balancer_dns is an output variable in Terraform
+          echo "Verifying load balancer DNS: $LB_DNS"
+          if curl -s --head --request GET "http://$LB_DNS" | grep "200 OK"; then
+            echo "Application is up and running"
+          else
+            echo "Application failed to start"
+            exit 1  # Exit with error if application is not running
+          fi
+
+      # Step 8: Handle Cleanup or Notifications on Failure (Optional)
+      - name: Notify failure on Slack or other
+        if: failure()  # Only run if the pipeline fails
+        run: |
+          echo "Sending failure notification"
+          # Add steps to notify on failure (e.g., Slack, email) if desired
+          # For example, use curl to call Slack API to send a failure notification.
 
