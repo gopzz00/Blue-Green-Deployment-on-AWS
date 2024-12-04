@@ -18,7 +18,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS access key
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS secret key
       INSTANCE_TYPE: ${{ secrets.INSTANCE_TYPE }}  # EC2 instance type (e.g., t2.micro)
-      KEYPAIR_NAME: ${{ secrets.KEYPAIR_NAME }}  # EC2 keypair name
+      KEYPAIR_NAME: ${{ secrets.KEY_NAME }}  # EC2 keypair name
       AMI_ID: ${{ secrets.AWS_AMI_ID }}  # AWS AMI ID for the instance
 
     steps:
