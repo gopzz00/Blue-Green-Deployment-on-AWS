@@ -1,30 +1,30 @@
-variable "aws_region" {
+variable "AWS_REGION" {
   description = "AWS region to deploy resources"
   type        = string
 }
 
-variable "aws_access_key" {
+variable "AWS_ACCESS_KEY_ID" {
   description = "AWS Access Key"
   type        = string
 }
 
-variable "aws_secret_key" {
+variable "AWS_SECRET_ACCESS_KEY" {
   description = "AWS Secret Key"
   type        = string
 }
 
-variable "instance_type" {
+variable "INSTANCE_TYPE" {
   description = "Type of instance to use"
   type        = string 
 }
 
-variable "ami_id" {
+variable "AWS_AMI_ID" {
   description = "AMI ID for the EC2 instances"
   type        = string
   default      = "ami-0866a3c8686eaeeba"
 }
 
-variable "key_name" {
+variable "KEY_NAME" {
   description = "Key pair name for SSH access"
   type        = string
 }
