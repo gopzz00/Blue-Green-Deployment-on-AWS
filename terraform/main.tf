@@ -1,8 +1,8 @@
 # Create Blue Instance
 resource "aws_instance" "blue" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  key_name      = var.key_name
+  ami           = var.AWS_AMI_ID
+  instance_type = var.INSTANCE_TYPE
+  key_name      = var.KEY_NAME
 
   tags = {
     Name = "blue-instance"
@@ -18,9 +18,9 @@ resource "aws_instance" "blue" {
 
 # Create Green Instance
 resource "aws_instance" "green" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  key_name      = var.key_name
+  ami           = var.AWS_AMI_ID
+  instance_type = var.INSTANCE_TYPE
+  key_name      = var.KEY_NAME
 
   tags = {
     Name = "green-instance"
